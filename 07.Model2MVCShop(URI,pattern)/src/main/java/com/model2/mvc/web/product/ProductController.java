@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.CookieGenerator;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
@@ -51,56 +52,52 @@ public class ProductController {
 	int pageSize;
 	
 	
-	@RequestMapping(value = "/addProduct", method = RequestMethod.GET)
+	@RequestMapping(value = "/product/addProduct", method = RequestMethod.GET)
 	public String addProductView() throws Exception {
 
-		System.out.println("/addProductView");
+		System.out.println("/product/addProductView");
 		
 		return "redirect:/product/addProductView.jsp";
 	}
 	
-	@RequestMapping(value = "/addProduct", method = RequestMethod.POST)
+	@RequestMapping(value = "/product/addProduct", method = RequestMethod.POST)
 	public String addProduct( @ModelAttribute("product")Product product ) throws Exception {
 
-		System.out.println("/addProduct");
+		System.out.println("/product/addProduct");
 		//Business Logic
 		productService.addProduct(product);
 		
-		return "redirect:/getProduct?prodNo="+product.getProdNo();
+		return "redirect:/product/getProduct?prodNo="+product.getProdNo();
 	}
 	
-	@RequestMapping("/getProduct")
+	@RequestMapping("/product/getProduct")
 	public String getProduct( @RequestParam("prodNo") int prodNo , Model model, HttpServletRequest request,
-							HttpServletResponse response, @CookieValue ( value = "history", required = false)Cookie cookie ) throws Exception {
+							HttpServletResponse response, @CookieValue ( value = "history", required = false)String history ) throws Exception {
 		
-		System.out.println("/getProduct");
+		System.out.println("/product/getProduct");
 		//Business Logic
 		Product product = productService.getProduct(prodNo);
 		// Model 과 View 연결
 		model.addAttribute("product", product);
 		
-		String history = "";
-		
-		if(cookie == null) {
-		cookie = new Cookie("history", Integer.toString(prodNo));
-		
-		}else {
-			
-		history = cookie.getValue(); 
-			
-		cookie.setValue(history+","+prodNo);
+		CookieGenerator cookie = new CookieGenerator();
+		cookie.setCookieName("history");
+		if(history == null) {
+		history = prodNo+"";	
+		}
+		else if(history!=null && history.indexOf(Integer.toString(prodNo))==-1) {
+		history = history + "," + prodNo;
 		}
 		
-		response.addCookie(cookie);
-		cookie.setMaxAge(-1);
+		cookie.addCookie(response, history);
 		
 		return "forward:/product/getProduct.jsp";
 	}
 	
-	@RequestMapping(value = "/updateProduct", method = RequestMethod.GET)
+	@RequestMapping(value = "/product/updateProduct", method = RequestMethod.GET)
 	public String updateUserView( @RequestParam("prodNo") int prodNo , Model model ) throws Exception{
 
-		System.out.println("/updateProductView");
+		System.out.println("/product/updateProductView");
 		//Business Logic
 		Product product = productService.getProduct(prodNo);
 		// Model 과 View 연결
@@ -109,21 +106,21 @@ public class ProductController {
 		return "forward:/product/updateProductView.jsp";
 	}
 	
-	@RequestMapping(value = "/updateProduct", method = RequestMethod.POST)
+	@RequestMapping(value = "/product/updateProduct", method = RequestMethod.POST)
 	public String updateUser( @ModelAttribute("product") Product product , Model model) throws Exception{
 
-		System.out.println("/updateProduct");
+		System.out.println("/product/updateProduct");
 		//Business Logic
 		productService.updateProduct(product);
 		
 		
-		return "redirect:/getProduct?prodNo="+product.getProdNo();
+		return "redirect:/product/getProduct?prodNo="+product.getProdNo();
 	}
 	
-	@RequestMapping("/listProduct")
+	@RequestMapping("/product/listProduct")
 	public String listProduct( @ModelAttribute("search") Search search , Model model , HttpServletRequest request, @RequestParam("menu")String menu) throws Exception{
 		
-		System.out.println("/listProduct");
+		System.out.println("/product/listProduct");
 		if(search.getCurrentPage() ==0 ){
 			search.setCurrentPage(1);
 		}

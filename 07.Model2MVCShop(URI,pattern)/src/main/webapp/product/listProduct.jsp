@@ -33,7 +33,7 @@ String searchKeyword = CommonUtil.null2str(search.getSearchKeyword());
 
 	<div style="width: 98%; margin-left: 10px;">
 
-		<form name="detailForm" action="/listProduct?menu=${menu}"
+		<form name="detailForm" action="/product/listProduct?menu=${menu}"
 			method="post">
 
 			<table width="100%" height="37" border="0" cellpadding="0"
@@ -133,10 +133,10 @@ String searchKeyword = CommonUtil.null2str(search.getSearchKeyword());
 						<td align="center">${i}</td>
 						<td></td>
 						<c:if test="${menu=='search'}">
-						<td align="left"><a href="/getProduct?prodNo=${product.prodNo}">${product.prodName}</a></td>
+						<td align="left"><a href="/product/getProduct?prodNo=${product.prodNo}">${product.prodName}</a></td>
 						</c:if>
 						<c:if test="${menu=='manage'}">
-						<td align="left"><a href="/updateProduct?prodNo=${product.prodNo}">${product.prodName}</a></td>
+						<td align="left"><a href="/product/updateProduct?prodNo=${product.prodNo}">${product.prodName}</a></td>
 						</c:if>
 						<td></td>
 						<td align="left">${product.price}</td>
